@@ -16,20 +16,6 @@ export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
-  const findTaskById = (id: number):({task: Task, index: number} | null) => {
-    const currentTasks = [...tasks];
-    let item = null
-    let updateIndex = -1;
-    const updateTask = currentTasks.find((task, index) => {
-      updateIndex=index; 
-      return task.id === id
-    });
-    if(updateTask){
-      item = {task: updateTask, index: updateIndex};
-    }
-    return item;
-  }
-
   function handleCreateNewTask() {
 
     if(newTaskTitle){
@@ -40,28 +26,21 @@ export function TaskList() {
       };
 
       setTasks([...tasks, newTask]);
+      setNewTaskTitle('');
     }
   }
 
   function handleToggleTaskCompletion(id: number) {
-    const currentTasks = [...tasks];
-    const updateTask = findTaskById(id);
-    if(updateTask) {
-      const {task, index} = updateTask;
-      task.isComplete = true;
-      currentTasks[index] = task;
-      setTasks(currentTasks);
-    }
+    const updatedTasks = tasks.map(
+      task => task.id === id ? 
+      {...task, isComplete: !task.isComplete} : 
+      task); 
+    setTasks(updatedTasks);
   }
 
   function handleRemoveTask(id: number) {
-    const currentTasks = [...tasks];
-    const updateTask = findTaskById(id);
-    if(updateTask) {
-      const {index} = updateTask;
-      currentTasks.splice(index, 1);
-      setTasks(currentTasks);
-    }
+    const filteredTasks = tasks.filter(task => task.id !== id);
+    setTasks(filteredTasks);
   }
 
   return (
